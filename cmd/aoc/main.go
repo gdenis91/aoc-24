@@ -22,6 +22,7 @@ func main() {
 	cmds := []cmd{
 		&cmdPrintInput{},
 		&cmdRun{},
+		&cmdGenerate{},
 	}
 
 	for _, c := range cmds {
