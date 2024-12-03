@@ -1,6 +1,7 @@
 package day1
 
 import (
+	_ "embed"
 	"fmt"
 	"slices"
 	"strconv"
@@ -8,6 +9,9 @@ import (
 
 	"github.com/gdenis91/aoc-24/aoc"
 )
+
+//go:embed sample.txt
+var SampleInput string
 
 func Part1(input string) (string, error) {
 	lines := aoc.SplitLines(input)
@@ -35,16 +39,9 @@ func Part1(input string) (string, error) {
 
 	var total int
 	for i := 0; i < len(col0); i++ {
-		diff := diff(col0[i], col1[i])
+		diff := aoc.Diff(col0[i], col1[i])
 		total += diff
 	}
 
 	return fmt.Sprint(total), nil
-}
-
-func diff(a, b int) int {
-	if a < b {
-		return b - a
-	}
-	return a - b
 }
