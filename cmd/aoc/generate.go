@@ -44,10 +44,26 @@ func (c *cmdGenerate) run() error {
 		}
 	}
 
+	err = createSampleFile(c.day)
+	if err != nil {
+		return fmt.Errorf("create sample file: %w", err)
+	}
+
 	err = c.updateSolutionsFile()
 	if err != nil {
 		return fmt.Errorf("update solutions file: %w", err)
 	}
+
+	return nil
+}
+
+func createSampleFile(day int) error {
+	sampleFile := fmt.Sprintf("solutions/day%d/sample.txt", day)
+	f, err := os.Create(sampleFile)
+	if err != nil {
+		return fmt.Errorf("os create: %w", err)
+	}
+	defer f.Close()
 
 	return nil
 }
@@ -111,9 +127,16 @@ func (c *cmdGenerate) flagSet() *flag.FlagSet {
 
 const partTemplate = `package day{{.Day}}
 
+import (
+	_ "embed"
+)
+{{ if eq .Part 1 }}
+ //go:embed sample.txt
+var SampleInput string
+{{ end }}
 func Part{{.Part}}(input string) (string, error) {
-    // TODO: Implement solution
-    return "", nil
+	// TODO: Implement solution
+	return "not implemented", nil
 }
 `
 
@@ -131,6 +154,10 @@ var (
 			1: {{ $sln.Pkg }}.Part1,
 			2: {{ $sln.Pkg }}.Part2,
 		},{{ end }}
+	}
+
+	SampleInput = map[int]string{ {{ range $i, $sln := . }}
+		{{ $sln.Day }}: {{ $sln.Pkg }}.SampleInput,{{ end }}
 	}
 )
 `
